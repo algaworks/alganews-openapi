@@ -41,11 +41,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserDetailed'
         '404':
-          description: Usuário não encontrado
-          content:
-            application/json:
-              schema:
-                  $ref: '#/components/schemas/Problem'
+          $ref: '#/components/responses/NotFound'
     put:
       operationId: updateUser
       summary: Atualiza um usuário
@@ -64,19 +60,13 @@ paths:
               schema:
                   $ref: '#/components/schemas/UserDetailed'
         '400':
-          description: Requisição inválida
-          content:
-            application/json:
-              schema:
-                  $ref: '#/components/schemas/Problem'
+          $ref: '#/components/responses/BadRequest'
         '404':
-          description: Usuário não encontrado
-          content:
-            application/json:
-              schema:
-                  $ref: '#/components/schemas/Problem'
+          $ref: '#/components/responses/NotFound'
   /users:
     get:
+      operationId: getUsers
+      summary: Consulta os usuários
       tags:
         - Users
       responses:
@@ -88,8 +78,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UserSummary'
-      operationId: getUsers
-      summary: Consulta os usuários
     post:
       operationId: createUser
       summary: Cria um novo usuário
@@ -108,11 +96,7 @@ paths:
               schema:
                   $ref: '#/components/schemas/UserDetailed'
         '400':
-          description: Requisição inválida
-          content:
-            application/json:
-              schema:
-                  $ref: '#/components/schemas/Problem'
+          $ref: '#/components/responses/BadRequest'
 
   /posts:
     get:
@@ -430,6 +414,20 @@ components:
           tokenUrl: 'http://localhost:8080/oauth/token'
           scopes:
             read_write: Acesso geral
+
+  responses:
+    NotFound:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema:
+              $ref: '#/components/schemas/Problem'
+    BadRequest:
+      description: Requisição inválida
+      content:
+        application/json:
+          schema:
+              $ref: '#/components/schemas/Problem'
 
   schemas:
     UserSummary:
