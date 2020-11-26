@@ -29,6 +29,7 @@ paths:
       parameters:
         - schema:
             type: integer
+            format: int64
           name: userId
           in: path
           required: true
@@ -46,6 +47,13 @@ paths:
       summary: Atualiza um usuário
       tags:
         - Users
+      parameters:
+        - schema:
+            type: integer
+            format: int64
+          name: userId
+          in: path
+          required: true
       requestBody:
         content:
           application/json:
@@ -63,7 +71,7 @@ paths:
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/Problema'
+                  $ref: '#/components/schemas/Problem'
       security:
         - oAuth:
             - 'users:read:all'
@@ -108,7 +116,7 @@ paths:
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/Problema'
+                  $ref: '#/components/schemas/Problem'
       security:
         - oAuth:
             - 'users:read:all'
@@ -460,137 +468,14 @@ components:
             'payments:search': pesquisa por folhas de pagamento
 
   schemas:
-    UserMetrics:
-      type: object
-      properties:
-        weeklyEarning:
-          type: number
-          format: float
-          minimum: 0
-          example: 1547.34
-        monthlyEarning:
-          type: number
-          format: float
-          minimum: 0
-          example: 9547.24
-        weeklyViews:
-          type: number
-          format: int32
-          minimum: 0
-          example: 100524
-        monthlyViews:
-          type: number
-          format: int32
-          minimum: 0
-          example: 657410
-        monthlyWords:
-          type: number
-          format: int32
-          minimum: 0
-          example: 14587
-        totalWords:
-          type: number
-          format: int32
-          minimum: 0
-          example: 758659
-    UserMetadata:
-      type: object
-      properties:
-        country:
-          type: string
-          example: 'Brazil'
-        phone:
-          type: string
-          example: '5527997778854'
-        state:
-          type: string
-          example: 'Espírito Santo'
-        city:
-          type: string
-          example: 'Vila Velha'
-    Skill:
-      type: object
-      properties:
-        name:
-          type: string
-          example: 'JavaScript'
-        percentage:
-          type: number
-          example: 95
-          minimum: 0
-          maximum: 100
-    BankAccount:
-      type: object
-      properties:
-        code:
-          type: number
-          example: 260
-        agency:
-          type: string
-          example: '0001'
-        accountNumber:
-          type: string
-          example: '254856'
-        accountDigit:
-          type: string
-          example: 5
-        accountType:
-          type: string
-          enum:
-            - 'ccpf'
-            - 'ccpj'
-            - 'cppf'
-          description: >
-            Tipos de contas:
-             * `ccpf` - Conta Corrente - Pessoa Física
-             * `ccpj` - Conta Corrente - Pessoa Jurídica
-             * `cppf` - Conta Poupança - Pessoa Física
-    Role:
-      type: string
-      example: 'editor'
-      enum:
-        - 'editor'
-        - 'admin'
-        - 'hr'
-        - 'super'
-      description: >
-        Tipos de perfis:
-          * `editor`  - Alga CMS - Editor
-          * `admin`   - Alga CMS - Administrador
-          * `hr`      - Alga Admin - Recursos Humanos e Administração
-          * `super`   - Gerente
-    UserScope:
-      type: string
-      example: 'users:read:*'
-      enum:
-        - 'users:read:*'
-        - 'users:read:*[detailed]'
-        - 'users:read:self[detailed]'
-        - 'users:create'
-        - 'users:change-password:self'
-        - 'users:change-password:*'
-        - 'users:search'
-        - 'posts:read'
-        - 'posts:read:private'
-        - 'posts:read:private:self'
-        - 'posts:write:self'
-        - 'posts:write'
-        - 'payments:write'
-        - 'payments:read'
-        - 'payments:read:self'
-        - 'payments:search'
-    UserScopes:
-      type: array
-      items:
-        $ref: '#/components/schemas/UserScope'
     UserSummary:
       description: 'Usuário simplificado. Não contém os metadados e informações particulares do usuário.'
       type: object
       properties:
         id:
-          type: string
-          format: uuid
-          example: '6832112f-e994-4f75-8ca0-aa88734241ff'
+          type: integer
+          format: int64
+          example: 29
         name:
           type: string
           example: 'Daniel Bonifacio'
@@ -631,9 +516,9 @@ components:
       type: object
       properties:
         id:
-          type: string
-          format: uuid
-          example: '6832112f-e994-4f75-8ca0-aa88734241ff'
+          type: integer
+          format: int64
+          example: 29
         name:
           type: string
           example: 'Daniel Bonifacio'
@@ -716,10 +601,10 @@ components:
           properties:
             country:
               type: string
-              example: 'Brazil'
+              example: 'Brasil'
             phone:
               type: string
-              example: '5527997778854'
+              example: '5527999991111'
             state:
               type: string
               example: 'Espírito Santo'
@@ -731,11 +616,7 @@ components:
           items:
             type: object
             properties:
-              id:
-                type: string
-                format: uuid
-                example: '8795457c-c7dd-4b57-b05c-7872b4f1a855'
-              title:
+              description:
                 type: string
                 example: 'JavaScript'
               percentage:
@@ -743,6 +624,130 @@ components:
                 minimum: 0
                 maximum: 100
                 example: 95
+    UserMetrics:
+      type: object
+      properties:
+        weeklyEarning:
+          type: number
+          format: float
+          minimum: 0
+          example: 1547.34
+        monthlyEarning:
+          type: number
+          format: float
+          minimum: 0
+          example: 9547.24
+        weeklyViews:
+          type: number
+          format: int32
+          minimum: 0
+          example: 100524
+        monthlyViews:
+          type: number
+          format: int32
+          minimum: 0
+          example: 657410
+        monthlyWords:
+          type: number
+          format: int32
+          minimum: 0
+          example: 14587
+        totalWords:
+          type: number
+          format: int32
+          minimum: 0
+          example: 758659
+    UserMetadata:
+      type: object
+      properties:
+        country:
+          type: string
+          example: 'Brazil'
+        phone:
+          type: string
+          example: '5527997778854'
+        state:
+          type: string
+          example: 'Espírito Santo'
+        city:
+          type: string
+          example: 'Vila Velha'
+
+    Skill:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'JavaScript'
+        percentage:
+          type: number
+          example: 95
+          minimum: 0
+          maximum: 100
+    BankAccount:
+      type: object
+      properties:
+        code:
+          type: number
+          example: 260
+        agency:
+          type: string
+          example: '0001'
+        accountNumber:
+          type: string
+          example: '254856'
+        accountDigit:
+          type: string
+          example: 5
+        accountType:
+          type: string
+          enum:
+            - 'ccpf'
+            - 'ccpj'
+            - 'cppf'
+          description: >
+            Tipos de contas:
+             * `ccpf` - Conta Corrente - Pessoa Física
+             * `ccpj` - Conta Corrente - Pessoa Jurídica
+             * `cppf` - Conta Poupança - Pessoa Física
+    Role:
+      type: string
+      example: 'editor'
+      enum:
+        - 'editor'
+        - 'admin'
+        - 'hr'
+        - 'super'
+      description: >
+        Tipos de perfis:
+          * `editor`  - Alga CMS - Editor
+          * `admin`   - Alga CMS - Administrador
+          * `hr`      - Alga Admin - Recursos Humanos e Administração
+          * `super`   - Gerente
+    UserScope:
+      type: string
+      example: 'users:read:*'
+      enum:
+        - 'users:read:*'
+        - 'users:read:*[detailed]'
+        - 'users:read:self[detailed]'
+        - 'users:create'
+        - 'users:change-password:self'
+        - 'users:change-password:*'
+        - 'users:search'
+        - 'posts:read'
+        - 'posts:read:private'
+        - 'posts:read:private:self'
+        - 'posts:write:self'
+        - 'posts:write'
+        - 'payments:write'
+        - 'payments:read'
+        - 'payments:read:self'
+        - 'payments:search'
+    UserScopes:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserScope'
     PostDefault:
       type: object
       properties:
@@ -1055,7 +1060,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PayrollDefault'
-    ObjetoProblema:
+    ProblemObject:
       type: object
       properties:
         name:
@@ -1064,9 +1069,9 @@ components:
         userMessage:
           type: string
           example: O valor é obrigatório
-      title: ObjetoProblema
-    Problema:
-      title: Problema
+      title: ProblemObject
+    Problem:
+      title: Problem
       type: object
       properties:
         status:
@@ -1093,7 +1098,7 @@ components:
           type: array
           description: Lista de objetos ou campos que geraram o erro (opcional)
           items:
-            $ref: '#/components/schemas/ObjetoProblema'
+            $ref: '#/components/schemas/ProblemObject'
 
 tags:
   - name: Users
