@@ -158,83 +158,6 @@ paths:
       operationId: get-posts-postid
       description: Recupera os detalhes de um único artigo
 
-  /authentication/login:
-    post:
-      summary: Login do usuário
-      tags:
-        - Authentication
-      operationId: post-authentication-login
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-                  expiresIn:
-                    type: string
-                  refreshToken:
-                    type: string
-                  userProfile:
-                    $ref: '#/components/schemas/UserSummary'
-                  scopes:
-                    $ref: '#/components/schemas/UserScopes'
-        '401':
-          description: Unauthorized
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                username:
-                  type: string
-                  minLength: 1
-                password:
-                  type: string
-                  minLength: 1
-              required:
-                - username
-                - password
-            examples:
-              username:
-                value:
-                  username: douglas.machado
-                  password: dougl@s#213
-              email:
-                value:
-                  username: douglas.machado@algacontent.com
-                  password: dougl@s#213
-      parameters: []
-      description: Autentica o usuário
-  /authentication/scopes/{rolename}:
-    parameters:
-      - schema:
-          $ref: '#/components/schemas/Role'
-        name: rolename
-        description: 'Identificador do perfil'
-        in: path
-        required: true
-    get:
-      summary: Recupera os escopos de determinado perfil
-      tags:
-        - Authentication
-      operationId: get-scopes
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserScopes'
-        '401':
-          description: Unauthorized
-      description: Autentica o usuário
-  
   /payrolls:
     parameters:
       - schema:
@@ -686,30 +609,6 @@ components:
           * `admin`   - Alga CMS - Administrador
           * `hr`      - Alga Admin - Recursos Humanos e Administração
           * `super`   - Gerente
-    UserScope:
-      type: string
-      example: 'users:read:*'
-      enum:
-        - 'users:read:*'
-        - 'users:read:*[detailed]'
-        - 'users:read:self[detailed]'
-        - 'users:create'
-        - 'users:change-password:self'
-        - 'users:change-password:*'
-        - 'users:search'
-        - 'posts:read'
-        - 'posts:read:private'
-        - 'posts:read:private:self'
-        - 'posts:write:self'
-        - 'posts:write'
-        - 'payments:write'
-        - 'payments:read'
-        - 'payments:read:self'
-        - 'payments:search'
-    UserScopes:
-      type: array
-      items:
-        $ref: '#/components/schemas/UserScope'
     PostDefault:
       type: object
       properties:
@@ -1073,5 +972,3 @@ tags:
     description: Publicações (posts)
   - name: Payrolls
     description: Folhas de pagamento
-  - name: Authentication
-    description: Autenticação
