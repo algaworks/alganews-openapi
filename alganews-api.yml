@@ -21,18 +21,18 @@ servers:
 
 paths:
   /users/{userId}:
+    parameters:
+      - schema:
+          type: integer
+          format: int64
+        name: userId
+        in: path
+        required: true
     get:
       operationId: getUserById
       summary: Busca um usuário por ID
       tags:
         - Users
-      parameters:
-        - schema:
-            type: integer
-            format: int64
-          name: userId
-          in: path
-          required: true
       responses:
         '200':
           description: OK
@@ -40,20 +40,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetailed'
-      security:
-        - oAuth: ['users:read:self', 'users:read:*']
     put:
       operationId: updateUser
       summary: Atualiza um usuário
       tags:
         - Users
-      parameters:
-        - schema:
-            type: integer
-            format: int64
-          name: userId
-          in: path
-          required: true
       requestBody:
         content:
           application/json:
@@ -72,10 +63,6 @@ paths:
             application/json:
               schema:
                   $ref: '#/components/schemas/Problem'
-      security:
-        - oAuth:
-            - 'users:read:all'
-
   /users:
     get:
       tags:
@@ -91,9 +78,6 @@ paths:
                   $ref: '#/components/schemas/UserSummary'
       operationId: getUsers
       summary: Consulta os usuários
-      security:
-        - oAuth:
-            - 'users:read:all'
     post:
       operationId: createUser
       summary: Cria um novo usuário
@@ -117,9 +101,6 @@ paths:
             application/json:
               schema:
                   $ref: '#/components/schemas/Problem'
-      security:
-        - oAuth:
-            - 'users:read:all'
 
   /posts:
     get:
@@ -139,8 +120,6 @@ paths:
       summary: Cadastrar artigo
       tags:
         - Posts
-      security:
-        - oAuth: ['posts:create']
       description: Cadastra um novo artigo
       operationId: post-posts
       responses:
@@ -321,8 +300,6 @@ paths:
     get:
       summary: Listar pagamentos
       tags: [Payrolls]
-      security:
-        - oAuth: ['payrolls:read:*']
       responses:
         '200':
           description: OK
@@ -340,8 +317,6 @@ paths:
       tags: [Payrolls]
       summary: 'Cria um novo agendamento de pagamento'
       operationId: post-payments
-      security:
-        - oAuth: ['payrolls:create:*']
       responses:
         '201':
           description: Created
@@ -374,8 +349,6 @@ paths:
         required: true
     put:
       summary: 'Aprova um agendamento de pagamento em aberto'
-      security:
-        - oAuth: ['payrolls:approve:*', 'payrolls:approve:self']
       description: 'Quando um pagamento está em aberto, é necessário que um gerente o aprove. Este endpoint irá atualizar o status do pagamento como "feito".'
       tags: [Payrolls]
       operationId: approve-payment
@@ -404,8 +377,6 @@ paths:
         required: true
     get:
       summary: 'Recupera dados de um agendamento'
-      security:
-        - oAuth: ['payrolls:read:*', 'payrolls:read:self']
       tags: [Payrolls]
       operationId: get-payroll
       responses:
@@ -423,8 +394,6 @@ paths:
           description: Not found
     delete:
       summary: 'Remove um agendamento de pagamento em aberto'
-      security:
-        - oAuth: ['payrolls:remove:*', 'payrolls:remove:self']
       description: >
         Quando algum dado de um agendamento de pagamento está errado, é necessário excluir o agendamento e criar um novo. A exclusão será física, não há como reverter esta ação.
         Caso o pagamento já tenha sido aprovado, não será possível excluir o registro.
@@ -442,30 +411,13 @@ components:
   securitySchemes:
     oAuth:
       type: oauth2
-      description: >-
-        This API uses OAuth 2 with the implicit grant flow. [More
-        info](https://api.example.com/docs/auth)
+      description: Esta API usa OAuth2 com o fluxo Authorization Code
       flows:
-        clientCredentials:
-          tokenUrl: ''
-          refreshUrl: ''
+        authorizationCode:
+          authorizationUrl: 'http://localhost:8080/login'
+          tokenUrl: 'http://localhost:8080/oauth/token'
           scopes:
-            'users:read:*': leitura de todos os usuários de forma geral
-            'users:read:*[detailed]': leitura de todos os usuários de forma detalhada
-            'users:read:self[detailed]': leitura do próprio usuário de forma detalhada
-            'users:create': criação de novos usuários
-            'users:change-password:self': atualizar senha
-            'users:change-password:*': atualizar senha
-            'users:search': pesquisa por usuários
-            'posts:read': leitura de todos os posts públicos
-            'posts:read:private': leitura de todos os posts privados
-            'posts:read:private:self': leitura dos próprios posts privados
-            'posts:write:self': escrita e atualização dos próprios posts
-            'posts:write': escrita e atualização de todos os posts
-            'payments:write': escrita e atualização de folhas de pagamento
-            'payments:read': leitura de todas as folhas de pagamento
-            'payments:read:self': leitura das próprias folhas de pagamento
-            'payments:search': pesquisa por folhas de pagamento
+            read_write: Acesso geral
 
   schemas:
     UserSummary:
@@ -1099,6 +1051,10 @@ components:
           description: Lista de objetos ou campos que geraram o erro (opcional)
           items:
             $ref: '#/components/schemas/ProblemObject'
+
+security: 
+- oAuth:
+    - read_write
 
 tags:
   - name: Users
