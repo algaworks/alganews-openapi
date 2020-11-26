@@ -1,1 +1,1038 @@
-"he"  
+openapi: 3.0.0
+info:
+  title: Alga Inc.
+  version: '1.0'
+  description: >-
+    Este documento tem a finalidade de especificar os endpoints fornecidos pela
+    API da Alga Inc.
+  contact:
+    email: contato@algaworks.com
+    name: AlgaWorks Softwares e Serviços LTDA.
+    url: 'https://www.algaworks.com'
+servers:
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/danielbonifacio/AlgaNews/1.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/danielbonifacio/AlgaBlog/1.0
+  - url: 'http://localhost:3000'
+paths:
+  '/users/{id}':
+    get:
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailed'
+      operationId: get-user
+      description: Usuário específico
+      summary: Usuário
+      security:
+        - oAuth: ['users:read:self', 'users:read:*']
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+  /users:
+    get:
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDefault'
+      operationId: get-users
+      description: Usuários ativos
+      summary: Listar usuários
+      security:
+        - oAuth:
+            - 'users:read:all'
+    post:
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreator'
+      responses:
+        '201':
+          description: Usuário criado
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDefault'
+      operationId: create-user
+      description: Usuários ativos
+      summary: Cria um novo usuário
+      security:
+        - oAuth:
+            - 'users:read:all'
+
+  /posts:
+    get:
+      summary: Artigos paginados
+      tags:
+        - Posts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostsPaginated'
+      operationId: get-posts
+      description: Recupera todos os artigos públicos em formato de paginação
+    post:
+      summary: Cadastrar artigo
+      tags:
+        - Posts
+      security:
+        - oAuth: ['posts:create']
+      description: Cadastra um novo artigo
+      operationId: post-posts
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormError'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCreator'
+        description: ''
+  /posts/{postid}:
+    parameters:
+      - schema:
+          type: string
+        name: postid
+        in: path
+        required: true
+    get:
+      summary: Artigo único
+      tags:
+        - Posts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDetailed'
+      operationId: get-posts-postid
+      description: Recupera os detalhes de um único artigo
+
+  /authentication/login:
+    post:
+      summary: Login do usuário
+      tags:
+        - Authentication
+      operationId: post-authentication-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  expiresIn:
+                    type: string
+                  refreshToken:
+                    type: string
+                  userProfile:
+                    $ref: '#/components/schemas/UserDefault'
+                  scopes:
+                    $ref: '#/components/schemas/UserScopes'
+        '401':
+          description: Unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                username:
+                  type: string
+                  minLength: 1
+                password:
+                  type: string
+                  minLength: 1
+              required:
+                - username
+                - password
+            examples:
+              username:
+                value:
+                  username: douglas.machado
+                  password: dougl@s#213
+              email:
+                value:
+                  username: douglas.machado@algacontent.com
+                  password: dougl@s#213
+      parameters: []
+      description: Autentica o usuário
+  /authentication/scopes/{rolename}:
+    parameters:
+      - schema:
+          $ref: '#/components/schemas/Role'
+        name: rolename
+        description: 'Identificador do perfil'
+        in: path
+        required: true
+    get:
+      summary: Recupera os escopos de determinado perfil
+      tags:
+        - Authentication
+      operationId: get-scopes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserScopes'
+        '401':
+          description: Unauthorized
+      description: Autentica o usuário
+      
+  
+  /payrolls:
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: 426ecbee-9c80-4e50-be6d-e691b81da8d5
+        name: userId
+        description: Exato
+        in: query
+        required: false
+      - schema:
+          type: string
+          format: email
+          example: joao.silva@alganews.com
+        in: query
+        name: userEmail
+        description: like
+        required: false
+      - schema:
+          type: string
+          enum:
+            - useremail
+            - username
+            - createdAt
+            - doneAt
+          example: doneAt
+          default: createdAt
+        name: sortBy
+        description: Por qual propriedade os resultados devem ser ordenados.
+        in: query
+      - schema:
+          type: string
+          enum:
+            - asc
+            - desc
+          example: asc
+          default: desc
+        name: orderBy
+        description: Qual ordem dos resultados
+        in: query
+      - schema:
+          type: number
+          format: int32
+          example: 2
+          default: 20
+        name: page
+        description: A página na qual você quer buscar os produtos
+        in: query
+      - schema:
+          type: number
+          format: int32
+          example: 50
+          minimum: 1
+          maximum: 100
+          default: 20
+        name: limit
+        description: Limite de itens por página
+        in: query
+    get:
+      summary: Listar pagamentos
+      tags: [Payrolls]
+      security:
+        - oAuth: ['payrolls:read:*']
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayrollsPaginated'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      operationId: get-payments
+      description: Listagem dos pagamentos feitos
+    post:
+      tags: [Payrolls]
+      summary: 'Cria um novo agendamento de pagamento'
+      operationId: post-payments
+      security:
+        - oAuth: ['payrolls:create:*']
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormError'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayrollCreator'
+        description: ''
+      description: Gera uma folha de pagamento
+  /payrolls/{payrollid}/approve:
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: '1491a7b9-75ae-4125-9995-8c45302879ba'
+        name: payrollid
+        description: 'Identificador do pagamento que deve ser aprovado'
+        in: path
+        required: true
+    put:
+      summary: 'Aprova um agendamento de pagamento em aberto'
+      security:
+        - oAuth: ['payrolls:approve:*', 'payrolls:approve:self']
+      description: 'Quando um pagamento está em aberto, é necessário que um gerente o aprove. Este endpoint irá atualizar o status do pagamento como "feito".'
+      tags: [Payrolls]
+      operationId: approve-payment
+      responses:
+        '200':
+          description: Aprovado
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormError'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /payrolls/{payrollid}:
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+          example: '1491a7b9-75ae-4125-9995-8c45302879ba'
+        name: payrollid
+        description: 'Identificador do pagamento que deve ser aprovado'
+        in: path
+        required: true
+    get:
+      summary: 'Recupera dados de um agendamento'
+      security:
+        - oAuth: ['payrolls:read:*', 'payrolls:read:self']
+      tags: [Payrolls]
+      operationId: get-payroll
+      responses:
+        '200':
+          description: Encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayrollDetailed'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+    delete:
+      summary: 'Remove um agendamento de pagamento em aberto'
+      security:
+        - oAuth: ['payrolls:remove:*', 'payrolls:remove:self']
+      description: >
+        Quando algum dado de um agendamento de pagamento está errado, é necessário excluir o agendamento e criar um novo. A exclusão será física, não há como reverter esta ação.
+        Caso o pagamento já tenha sido aprovado, não será possível excluir o registro.
+      tags: [Payrolls]
+      operationId: delete-payroll
+      responses:
+        '200':
+          description: Aprovado
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+components:
+  securitySchemes:
+    oAuth:
+      type: oauth2
+      description: >-
+        This API uses OAuth 2 with the implicit grant flow. [More
+        info](https://api.example.com/docs/auth)
+      flows:
+        clientCredentials:
+          tokenUrl: ''
+          refreshUrl: ''
+          scopes:
+            'users:read:*': leitura de todos os usuários de forma geral
+            'users:read:*[detailed]': leitura de todos os usuários de forma detalhada
+            'users:read:self[detailed]': leitura do próprio usuário de forma detalhada
+            'users:create': criação de novos usuários
+            'users:change-password:self': atualizar senha
+            'users:change-password:*': atualizar senha
+            'users:search': pesquisa por usuários
+            'posts:read': leitura de todos os posts públicos
+            'posts:read:private': leitura de todos os posts privados
+            'posts:read:private:self': leitura dos próprios posts privados
+            'posts:write:self': escrita e atualização dos próprios posts
+            'posts:write': escrita e atualização de todos os posts
+            'payments:write': escrita e atualização de folhas de pagamento
+            'payments:read': leitura de todas as folhas de pagamento
+            'payments:read:self': leitura das próprias folhas de pagamento
+            'payments:search': pesquisa por folhas de pagamento
+  schemas:
+    UserMetrics:
+      type: object
+      properties:
+        weeklyEarning:
+          type: number
+          format: float
+          minimum: 0
+          example: 1547.34
+        monthlyEarning:
+          type: number
+          format: float
+          minimum: 0
+          example: 9547.24
+        weeklyViews:
+          type: number
+          format: int32
+          minimum: 0
+          example: 100524
+        monthlyViews:
+          type: number
+          format: int32
+          minimum: 0
+          example: 657410
+        monthlyWords:
+          type: number
+          format: int32
+          minimum: 0
+          example: 14587
+        totalWords:
+          type: number
+          format: int32
+          minimum: 0
+          example: 758659
+    UserMetadata:
+      type: object
+      properties:
+        country:
+          type: string
+          example: 'Brazil'
+        phone:
+          type: string
+          example: '5527997778854'
+        state:
+          type: string
+          example: 'Espírito Santo'
+        city:
+          type: string
+          example: 'Vila Velha'
+    Skill:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'JavaScript'
+        percentage:
+          type: number
+          example: 95
+          minimum: 0
+          maximum: 100
+    BankAccount:
+      type: object
+      properties:
+        code:
+          type: number
+          example: 260
+        agency:
+          type: string
+          example: '0001'
+        accountNumber:
+          type: string
+          example: '254856'
+        accountDigit:
+          type: string
+          example: 5
+        accountType:
+          type: string
+          enum:
+            - 'ccpf'
+            - 'ccpj'
+            - 'cppf'
+          description: >
+            Tipos de contas:
+             * `ccpf` - Conta Corrente - Pessoa Física
+             * `ccpj` - Conta Corrente - Pessoa Jurídica
+             * `cppf` - Conta Poupança - Pessoa Física
+    Role:
+      type: string
+      example: 'editor'
+      enum:
+        - 'editor'
+        - 'admin'
+        - 'hr'
+        - 'super'
+      description: >
+        Tipos de perfis:
+          * `editor`  - Alga CMS - Editor
+          * `admin`   - Alga CMS - Administrador
+          * `hr`      - Alga Admin - Recursos Humanos e Administração
+          * `super`   - Gerente
+    UserScope:
+      type: string
+      example: 'users:read:*'
+      enum:
+        - 'users:read:*'
+        - 'users:read:*[detailed]'
+        - 'users:read:self[detailed]'
+        - 'users:create'
+        - 'users:change-password:self'
+        - 'users:change-password:*'
+        - 'users:search'
+        - 'posts:read'
+        - 'posts:read:private'
+        - 'posts:read:private:self'
+        - 'posts:write:self'
+        - 'posts:write'
+        - 'payments:write'
+        - 'payments:read'
+        - 'payments:read:self'
+        - 'payments:search'
+    UserScopes:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserScope'
+    UserDefault:
+      description: 'Usuário simplificado. Não contém os metadados e informações particulares do usuário.'
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: '6832112f-e994-4f75-8ca0-aa88734241ff'
+        name:
+          type: string
+          example: 'Daniel Bonifacio'
+        email:
+          type: string
+          format: email
+          example: 'daniel.bonifacio@algaworks.com'
+        avatar:
+          type: string
+          format: uri
+          example: 'https://algacms.s3.amazonaws.com/avatar/6832112f-e994-4f75-8ca0-aa88734241ff.png'
+        bio:
+          type: string
+          example: 'Gosta de JavaScript.'
+        role:
+          $ref: '#/components/schemas/Role'
+        active:
+          type: boolean
+          example: true
+        birthdate:
+          type: string
+          format: date
+          example: '1999-04-01'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/Skill'
+    UserDetailed:
+      description: 'Usuário detalhado contém todos os metadados e informações particulares do usuário.'
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: '6832112f-e994-4f75-8ca0-aa88734241ff'
+        name:
+          type: string
+          example: 'Daniel Bonifacio'
+        email:
+          type: string
+          format: email
+          example: 'daniel.bonifacio@algaworks.com'
+        avatar:
+          type: string
+          format: uri
+          example: 'https://algacms.s3.amazonaws.com/avatar/6832112f-e994-4f75-8ca0-aa88734241ff.png'
+        bio:
+          type: string
+          example: 'Gosta de JavaScript.'
+        role:
+          $ref: '#/components/schemas/Role'
+        active:
+          type: boolean
+          example: true
+        birthdate:
+          type: string
+          format: date
+          example: '1999-04-01'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+        metadata:
+          $ref: '#/components/schemas/UserMetadata'
+        metrics:
+          $ref: '#/components/schemas/UserMetrics'
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/Skill'
+    UserCreator:
+      type: object
+      required:
+        - nick
+        - name
+        - email
+        - bio
+        - birthdate
+        - metadata
+        - bank
+        - role
+        - skills
+      properties:
+        nick:
+          type: string
+          example: 'danielbonifacio'
+        name:
+          type: string
+          example: 'Daniel Bonifacio'
+        email:
+          type: string
+          format: email
+          example: 'daniel.bonifacio@algaworks.com'
+        avatar:
+          type: string
+          format: uri
+          example: 'https://algacms.s3.amazonaws.com/avatar/6832112f-e994-4f75-8ca0-aa88734241ff.png'
+        bio:
+          type: string
+          example: 'Gosta de JavaScript.'
+        role:
+          $ref: '#/components/schemas/Role'
+        birthdate:
+          type: string
+          format: date
+          example: '1999-04-01'
+        bank:
+          $ref: '#/components/schemas/BankAccount'
+        metadata:
+          type: object
+          properties:
+            country:
+              type: string
+              example: 'Brazil'
+            phone:
+              type: string
+              example: '5527997778854'
+            state:
+              type: string
+              example: 'Espírito Santo'
+            city:
+              type: string
+              example: 'Vila Velha'
+        skills:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                example: '8795457c-c7dd-4b57-b05c-7872b4f1a855'
+              title:
+                type: string
+                example: 'JavaScript'
+              percentage:
+                type: number
+                minimum: 0
+                maximum: 100
+                example: 95
+    PostDefault:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 'ad6e6a2a-b221-46b7-b0af-d3c447065941'
+        slug:
+          type: string
+          example: 'como-fazer-x-coisas-com-react-js'
+        title:
+          type: string
+          example: 'Como fazer X coisas com React.js'
+        image:
+          type: string
+          format: uri
+          example: 'https://algacms.s3.amazonaws.com/posts/como-fazer-x-coisas-com-react-js-cover.png'
+        author:
+          $ref: '#/components/schemas/UserDefault'
+        tags:
+          type: array
+          items:
+            type: string
+            example: 'JavaScript'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+    PostDetailed:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 'ad6e6a2a-b221-46b7-b0af-d3c447065941'
+        author:
+          $ref: '#/components/schemas/UserDefault'
+        slug:
+          type: string
+          example: 'como-fazer-x-coisas-com-react-js'
+        title:
+          type: string
+          example: 'Como fazer X coisas com React.js'
+        image:
+          type: string
+          format: uri
+          example: 'https://algacms.s3.amazonaws.com/posts/como-fazer-x-coisas-com-react-js-cover.png'
+        body:
+          type: string
+          description: Este campo retornará uma string marcada utilizando markdown
+          example: >
+            Olá, hoje eu vou **mostrar** a como fazer X coisas com `react.js`
+        tags:
+          type: array
+          items:
+            type: string
+            example: 'JavaScript'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+    PostCreator:
+      type: object
+      required:
+        - title
+        - image
+        - body
+        - tags
+      properties:
+        title:
+          type: string
+          example: 'Como fazer X coisas com React.js'
+        image:
+          type: string
+          format: uri
+          example: 'https://algacms.s3.amazonaws.com/posts/como-fazer-x-coisas-com-react-js-cover.png'
+        body:
+          type: string
+          description: Este campo retornará uma string marcada utilizando markdown
+          example: >
+            Olá, hoje eu vou **mostrar** a como fazer X coisas com `react.js`
+        tags:
+          type: array
+          items:
+            type: string
+            example: 'JavaScript'
+    PostsPaginated:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          example: 2
+        nextPage:
+          type: integer
+          format: int32
+          example: 3
+        totalPages:
+          type: integer
+          format: int32
+          example: 15
+        offset:
+          type: number
+          format: int32
+          example: 9
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostDefault'
+    FormError:
+      title: FormError
+      type: array
+      items:
+        type: object
+        properties:
+          field:
+            type: string
+            example: 'username'
+          errors:
+            type: array
+            items:
+              type: string
+              example: No máximo 20 caracteres
+        required:
+          - field
+          - errors
+      description: ''
+    PayrollCreator:
+      type: object
+      properties:
+        userId:
+          type: string
+          example: '6a240b23-95e4-4d5f-8c8d-bb3c73e3cebc'
+        range:
+          type: object
+          properties:
+            from:
+              type: string
+              format: date
+              example: '2017-03-04'
+            to:
+              type: string
+              format: date
+              example: '2017-04-04'
+        bonus:
+          type: array
+          uniqueItems: true
+          minItems: 0
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                example: '1kk views em 1 dia'
+              amount:
+                type: number
+                example: 1500
+    PayrollDetailed:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'b39cf83c-f8d9-49bb-bc64-f69ca1a58b67'
+        creator:
+          $ref: '#/components/schemas/UserDefault'
+        approver:
+          $ref: '#/components/schemas/UserDefault'
+        userId:
+          type: string
+          example: '6a240b23-95e4-4d5f-8c8d-bb3c73e3cebc'
+        range:
+          type: object
+          properties:
+            from:
+              type: string
+              format: date-time
+              example: '2017-03-04T00:12:45-03:00'
+            to:
+              type: string
+              format: date-time
+              example: '2017-03-04T00:12:45-03:00'
+        amount:
+          type: number
+          minimum: 0
+          example: 14857.09
+        userBank:
+          type: object
+          properties:
+            code:
+              type: number
+              example: 260
+            agency:
+              type: string
+              example: '0001'
+            accountNumber:
+              type: string
+              example: '254856'
+            accountDigit:
+              type: string
+              example: 5
+            accountType:
+              type: string
+              enum:
+                - 'ccpf'
+                - 'ccpj'
+                - 'cppf'
+              description: >
+                Tipos de contas:
+                 * `ccpf` - Conta Corrente - Pessoa Física
+                 * `ccpj` - Conta Corrente - Pessoa Jurídica
+                 * `cppf` - Conta Poupança - Pessoa Física
+        bonus:
+          type: array
+          uniqueItems: true
+          minItems: 0
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                example: '1kk views em 1 dia'
+              amount:
+                type: number
+                example: 1500
+        approvedAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+        scheduledTo:
+          type: string
+          format: date
+          example: '2017-03-04'
+        done:
+          type: boolean
+          example: true
+    PayrollDefault:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'b39cf83c-f8d9-49bb-bc64-f69ca1a58b67'
+        userId:
+          type: string
+          example: '6a240b23-95e4-4d5f-8c8d-bb3c73e3cebc'
+        user:
+          $ref: '#/components/schemas/UserDefault'
+        range:
+          type: object
+          properties:
+            from:
+              type: string
+              format: date-time
+              example: '2017-03-04T00:12:45-03:00'
+            to:
+              type: string
+              format: date-time
+              example: '2017-03-04T00:12:45-03:00'
+        amount:
+          type: number
+          minimum: 0
+          example: 14857.09
+        approvedAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45-03:00'
+        scheduledTo:
+          type: string
+          format: date
+          example: '2017-03-04'
+        done:
+          type: boolean
+          example: true
+    PayrollsPaginated:
+      title: PayrollsPaginated
+      type: object
+      properties:
+        page:
+          type: number
+          format: int32
+          example: 2
+        nextPage:
+          type: number
+          format: int32
+          example: 3
+        totalPages:
+          type: number
+          format: int32
+          example: 15
+        offset:
+          type: number
+          format: int32
+          example: 25
+        payrolls:
+          type: array
+          items:
+            $ref: '#/components/schemas/PayrollDefault'
+tags:
+  - name: Users
+    description: Tudo sobre usuários
+  - name: Posts
+    description: Tudo sobre postagens
+  - name: Authentication
+    description: Tudo sobre autenticação
+  - name: Payrolls
+    description: Tudo sobre pagamentos
