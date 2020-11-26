@@ -1,14 +1,15 @@
 openapi: 3.0.0
+
 info:
   title: AlgaNews.
   version: '1.0'
   description: >-
-    Este documento tem a finalidade de especificar os endpoints fornecidos pela
-    API da AlgaNews.
+    REST API da plataforma de notícias da AlgaNews.
   contact:
     email: contato@algaworks.com
     name: AlgaWorks
     url: 'https://www.algaworks.com'
+
 servers:
   # Added by API Auto Mocking Plugin
   # Added by API Auto Mocking Plugin
@@ -17,30 +18,56 @@ servers:
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/danielbonifacio/AlgaBlog/1.0
   - url: 'http://localhost:3000'
+
 paths:
-  '/users/{id}':
+  /users/{userId}:
     get:
+      operationId: getUserById
+      summary: Busca um usuário por ID
       tags:
         - Users
+      parameters:
+        - schema:
+            type: integer
+          name: userId
+          in: path
+          required: true
       responses:
         '200':
           description: OK
-          headers: {}
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetailed'
-      operationId: get-user
-      description: Usuário específico
-      summary: Usuário
       security:
         - oAuth: ['users:read:self', 'users:read:*']
-    parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
+    put:
+      operationId: updateUser
+      summary: Atualiza um usuário
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '200':
+          description: Usuário atualizado
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/UserDetailed'
+        '400':
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Problema'
+      security:
+        - oAuth:
+            - 'users:read:all'
+
   /users:
     get:
       tags:
@@ -48,40 +75,40 @@ paths:
       responses:
         '200':
           description: OK
-          headers: {}
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserDefault'
-      operationId: get-users
-      description: Usuários ativos
-      summary: Listar usuários
+                  $ref: '#/components/schemas/UserSummary'
+      operationId: getUsers
+      summary: Consulta os usuários
       security:
         - oAuth:
             - 'users:read:all'
     post:
+      operationId: createUser
+      summary: Cria um novo usuário
       tags:
         - Users
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserCreator'
+              $ref: '#/components/schemas/UserInput'
       responses:
         '201':
           description: Usuário criado
-          headers: {}
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserDefault'
-      operationId: create-user
-      description: Usuários ativos
-      summary: Cria um novo usuário
+                  $ref: '#/components/schemas/UserDetailed'
+        '400':
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Problema'
       security:
         - oAuth:
             - 'users:read:all'
@@ -169,7 +196,7 @@ paths:
                   refreshToken:
                     type: string
                   userProfile:
-                    $ref: '#/components/schemas/UserDefault'
+                    $ref: '#/components/schemas/UserSummary'
                   scopes:
                     $ref: '#/components/schemas/UserScopes'
         '401':
@@ -224,7 +251,6 @@ paths:
         '401':
           description: Unauthorized
       description: Autentica o usuário
-      
   
   /payrolls:
     parameters:
@@ -403,6 +429,7 @@ paths:
           description: Unauthorized
         '403':
           description: Forbidden
+
 components:
   securitySchemes:
     oAuth:
@@ -431,6 +458,7 @@ components:
             'payments:read': leitura de todas as folhas de pagamento
             'payments:read:self': leitura das próprias folhas de pagamento
             'payments:search': pesquisa por folhas de pagamento
+
   schemas:
     UserMetrics:
       type: object
@@ -555,7 +583,7 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/UserScope'
-    UserDefault:
+    UserSummary:
       description: 'Usuário simplificado. Não contém os metadados e informações particulares do usuário.'
       type: object
       properties:
@@ -632,11 +660,11 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2017-03-04T00:12:45-03:00'
+          example: '2020-03-04T00:12:45-03:00Z'
         updatedAt:
           type: string
           format: date-time
-          example: '2017-03-04T00:12:45-03:00'
+          example: '2020-03-04T00:12:45-03:00Z'
         metadata:
           $ref: '#/components/schemas/UserMetadata'
         metrics:
@@ -645,7 +673,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Skill'
-    UserCreator:
+    UserInput:
       type: object
       required:
         - nick
@@ -733,7 +761,7 @@ components:
           format: uri
           example: 'https://algacms.s3.amazonaws.com/posts/como-fazer-x-coisas-com-react-js-cover.png'
         author:
-          $ref: '#/components/schemas/UserDefault'
+          $ref: '#/components/schemas/UserSummary'
         tags:
           type: array
           items:
@@ -755,7 +783,7 @@ components:
           format: uuid
           example: 'ad6e6a2a-b221-46b7-b0af-d3c447065941'
         author:
-          $ref: '#/components/schemas/UserDefault'
+          $ref: '#/components/schemas/UserSummary'
         slug:
           type: string
           example: 'como-fazer-x-coisas-com-react-js'
@@ -887,9 +915,9 @@ components:
           type: string
           example: 'b39cf83c-f8d9-49bb-bc64-f69ca1a58b67'
         creator:
-          $ref: '#/components/schemas/UserDefault'
+          $ref: '#/components/schemas/UserSummary'
         approver:
-          $ref: '#/components/schemas/UserDefault'
+          $ref: '#/components/schemas/UserSummary'
         userId:
           type: string
           example: '6a240b23-95e4-4d5f-8c8d-bb3c73e3cebc'
@@ -972,7 +1000,7 @@ components:
           type: string
           example: '6a240b23-95e4-4d5f-8c8d-bb3c73e3cebc'
         user:
-          $ref: '#/components/schemas/UserDefault'
+          $ref: '#/components/schemas/UserSummary'
         range:
           type: object
           properties:
@@ -1027,12 +1055,52 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PayrollDefault'
+    ObjetoProblema:
+      type: object
+      properties:
+        name:
+          type: string
+          example: amount
+        userMessage:
+          type: string
+          example: O valor é obrigatório
+      title: ObjetoProblema
+    Problema:
+      title: Problema
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+          example: 400
+        timestamp:
+          type: string
+          format: date-time
+          example: '2020-12-01T18:09:02Z'
+        type:
+          type: string
+          example: 'https://alganews.com.br/dados-invalidos'
+        title:
+          type: string
+          example: Dados inválidos
+        detail:
+          type: string
+          example: Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.
+        userMessage:
+          type: string
+          example: Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.
+        objects:
+          type: array
+          description: Lista de objetos ou campos que geraram o erro (opcional)
+          items:
+            $ref: '#/components/schemas/ObjetoProblema'
+
 tags:
   - name: Users
-    description: Tudo sobre usuários
+    description: Usuários
   - name: Posts
-    description: Tudo sobre postagens
-  - name: Authentication
-    description: Tudo sobre autenticação
+    description: Publicações (posts)
   - name: Payrolls
-    description: Tudo sobre pagamentos
+    description: Folhas de pagamento
+  - name: Authentication
+    description: Autenticação
