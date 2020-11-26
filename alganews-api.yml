@@ -40,6 +40,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetailed'
+        '404':
+          description: Usuário não encontrado
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Problem'
     put:
       operationId: updateUser
       summary: Atualiza um usuário
@@ -59,6 +65,12 @@ paths:
                   $ref: '#/components/schemas/UserDetailed'
         '400':
           description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Problem'
+        '404':
+          description: Usuário não encontrado
           content:
             application/json:
               schema:
