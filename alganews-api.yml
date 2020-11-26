@@ -1,13 +1,13 @@
 openapi: 3.0.0
 info:
-  title: Alga Inc.
+  title: AlgaNews.
   version: '1.0'
   description: >-
     Este documento tem a finalidade de especificar os endpoints fornecidos pela
-    API da Alga Inc.
+    API da AlgaNews.
   contact:
     email: contato@algaworks.com
-    name: AlgaWorks Softwares e Serviços LTDA.
+    name: AlgaWorks
     url: 'https://www.algaworks.com'
 servers:
   # Added by API Auto Mocking Plugin
