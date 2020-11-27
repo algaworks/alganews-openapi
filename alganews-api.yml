@@ -23,12 +23,7 @@ paths:
 
   /users/{userId}:
     parameters:
-      - schema:
-          type: integer
-          format: int64
-        name: userId
-        in: path
-        required: true
+      - $ref: '#/components/parameters/userId'
     get:
       operationId: getUserById
       summary: Busca um usuário por ID
@@ -100,12 +95,7 @@ paths:
           $ref: '#/components/responses/BadRequest'
   /users/{userId}/activation:
     parameters:
-      - schema:
-          type: integer
-          format: int64
-        name: userId
-        in: path
-        required: true
+      - $ref: '#/components/parameters/userId'
     put:
       operationId: activateUser
       summary: Ativa um usuário
@@ -380,6 +370,15 @@ components:
         application/json:
           schema:
               $ref: '#/components/schemas/Problem'
+
+  parameters:
+    userId:
+        schema:
+          type: integer
+          format: int64
+        name: userId
+        in: path
+        required: true
 
   schemas:
     UserSummary:
