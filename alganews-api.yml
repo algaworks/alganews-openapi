@@ -98,6 +98,34 @@ paths:
                   $ref: '#/components/schemas/UserDetailed'
         '400':
           $ref: '#/components/responses/BadRequest'
+  /users/{userId}/activation:
+    parameters:
+      - schema:
+          type: integer
+          format: int64
+        name: userId
+        in: path
+        required: true
+    put:
+      operationId: activateUser
+      summary: Ativa um usuário
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Usuário ativado
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deactivateUser
+      summary: Desativa um usuário
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Usuário desativado
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /posts:
     get:
