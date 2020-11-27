@@ -122,6 +122,53 @@ paths:
       summary: Artigos paginados
       tags:
         - Posts
+      parameters: 
+        - schema:
+            type: string
+            format: uuid
+            example: 426ecbee-9c80-4e50-be6d-e691b81da8d5
+          name: userId
+          description: Exato
+          in: query
+          required: false
+        - schema:
+            type: string
+            enum:
+              - createdAt
+              - updatedAt
+            example: updatedAt
+            default: createdAt
+          name: sortBy
+          description: Por qual propriedade os resultados devem ser ordenados.
+          in: query
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            example: asc
+            default: desc
+          name: orderBy
+          description: Qual ordem dos resultados
+          in: query
+        - schema:
+            type: number
+            format: int32
+            example: 2
+            default: 20
+          name: page
+          description: A página na qual você quer buscar os produtos
+          in: query
+        - schema:
+            type: number
+            format: int32
+            example: 50
+            minimum: 1
+            maximum: 100
+            default: 20
+          name: limit
+          description: Limite de itens por página
+          in: query
       responses:
         '200':
           description: OK
