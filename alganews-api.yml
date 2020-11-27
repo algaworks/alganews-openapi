@@ -344,6 +344,18 @@ paths:
           description: Unauthorized
         '403':
           description: Forbidden
+          
+  /graphs/investiment-revenue:
+    get:
+      summary: Recupera dados para gerar um gráfico de Faturamento x Investimento anual
+      tags: [Graphs]
+      responses:
+        '200':
+          description: Dados para gerar o gráfico encontrados
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/GraphInvestimentRevenue'
 
 components:
   securitySchemes:
@@ -1067,6 +1079,36 @@ components:
           description: Lista de objetos ou campos que geraram o erro (opcional)
           items:
             $ref: '#/components/schemas/ProblemObject'
+    GraphInvestimentRevenue:
+      type: object
+      properties:
+        datasets:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+                enum: ['Faturamento', 'Investimento']
+                example: Faturamento
+              data:
+                type: array
+                items:
+                  type: number
+                  example: [254587, 325478, 451758, 325875, 521745, 452140, 354751, 658430]
+        labels:
+          type: array
+          items:
+            type: string
+            enum: [JAN, FEV, MAR, ABR, MAI, JUN, JUL, AGO, SET, OUT, NOV, DEZ]
+            example: [JAN, FEV, MAR, ABR, MAI, JUN, JUL, AGO]
+      example:
+        datasets:
+          - label: 'Faturamento'
+            data: [254587, 325478, 451758, 325875, 521745, 452140, 354751, 658430, 702741, 344553, 700343, 1125145]
+          - label: 'Investimentos'
+            data: [554720, 500000, 450000, 200000, 200000, 200000, 200000, 400000, 100000, 150000, 200000, 700000]
+        labels: ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
 
 security: 
 - oAuth:
@@ -1079,3 +1121,5 @@ tags:
     description: Publicações (posts)
   - name: Payrolls
     description: Folhas de pagamento
+  - name: Graphs
+    description: Gráficos
