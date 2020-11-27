@@ -20,6 +20,7 @@ servers:
   - url: 'http://localhost:3000'
 
 paths:
+
   /users/{userId}:
     parameters:
       - schema:
@@ -354,7 +355,50 @@ components:
 
   schemas:
     UserSummary:
-      description: 'Usuário simplificado. Não contém os metadados e informações particulares do usuário.'
+      description: 'Usuário resumido possui apenas os principais dados.'
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 29
+        name:
+          type: string
+          example: 'Daniel Bonifacio'
+        email:
+          type: string
+          format: email
+          example: 'daniel.bonifacio@algaworks.com'
+        avatar:
+          type: string
+          format: uri
+          example: 'https://algacms.s3.amazonaws.com/avatar/6832112f-e994-4f75-8ca0-aa88734241ff.png'
+        # bio:
+        #   type: string
+        #   example: 'Gosta de JavaScript.'
+        role:
+          $ref: '#/components/schemas/Role'
+        active:
+          type: boolean
+          example: true
+        # birthdate:
+        #   type: string
+        #   format: date
+        #   example: '1999-04-01'
+        createdAt:
+          type: string
+          format: date-time
+          example: '2017-03-04T00:12:45Z'
+        # updatedAt:
+        #   type: string
+        #   format: date-time
+        #   example: '2017-03-04T00:12:45Z'
+        # skills:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/Skill'
+    UserDetailed:
+      description: 'Usuário detalhado contém todos os dados.'
       type: object
       properties:
         id:
@@ -384,19 +428,26 @@ components:
           type: string
           format: date
           example: '1999-04-01'
+        phone:
+          type: string
+          example: '5527977778888'
         createdAt:
           type: string
           format: date-time
-          example: '2017-03-04T00:12:45-03:00'
+          example: '2020-03-04T00:12:45-03:00Z'
         updatedAt:
           type: string
           format: date-time
-          example: '2017-03-04T00:12:45-03:00'
+          example: '2020-03-04T00:12:45-03:00Z'
+        location:
+          $ref: '#/components/schemas/Location'
+        metrics:
+          $ref: '#/components/schemas/UserMetrics'
         skills:
           type: array
           items:
             $ref: '#/components/schemas/Skill'
-    UserDetailed:
+    UserDetailedOld:
       description: 'Usuário detalhado contém todos os metadados e informações particulares do usuário.'
       type: object
       properties:
@@ -446,19 +497,19 @@ components:
     UserInput:
       type: object
       required:
-        - nick
+        # - nick
         - name
         - email
         - bio
         - birthdate
         - metadata
-        - bank
+        - bankAccount
         - role
         - skills
       properties:
-        nick:
-          type: string
-          example: 'danielbonifacio'
+        # nick:
+        #   type: string
+        #   example: 'danielbonifacio'
         name:
           type: string
           example: 'Daniel Bonifacio'
@@ -473,65 +524,68 @@ components:
         bio:
           type: string
           example: 'Gosta de JavaScript.'
+        phone:
+          type: string
+          example: '5527999991111'
         role:
           $ref: '#/components/schemas/Role'
         birthdate:
           type: string
           format: date
           example: '1999-04-01'
-        bank:
+        bankAccount:
           $ref: '#/components/schemas/BankAccount'
-        metadata:
-          type: object
-          properties:
-            country:
-              type: string
-              example: 'Brasil'
-            phone:
-              type: string
-              example: '5527999991111'
-            state:
-              type: string
-              example: 'Espírito Santo'
-            city:
-              type: string
-              example: 'Vila Velha'
+        location:
+          $ref: '#/components/schemas/Location'
+        # metadata:
+        #   type: object
+        #   properties:
+        #     country:
+        #       type: string
+        #       example: 'Brasil'
+        #     phone:
+        #       type: string
+        #       example: '5527999991111'
+        #     state:
+        #       type: string
+        #       example: 'Espírito Santo'
+        #     city:
+        #       type: string
+        #       example: 'Vila Velha'
         skills:
           type: array
           items:
-            type: object
-            properties:
-              description:
-                type: string
-                example: 'JavaScript'
-              percentage:
-                type: number
-                minimum: 0
-                maximum: 100
-                example: 95
+            $ref: '#/components/schemas/Skill'
+          # type: array
+          # items:
+          #   type: object
+          #   properties:
+          #     description:
+          #       type: string
+          #       example: 'JavaScript'
+          #     percentage:
+          #       type: number
+          #       minimum: 0
+          #       maximum: 100
+          #       example: 95
     UserMetrics:
       type: object
       properties:
-        weeklyEarning:
+        weeklyEarnings:
           type: number
           format: float
           minimum: 0
           example: 1547.34
-        monthlyEarning:
+        monthlyEarnings:
           type: number
           format: float
           minimum: 0
           example: 9547.24
-        weeklyViews:
+        weeklyWords:
           type: number
           format: int32
           minimum: 0
-          example: 100524
-        monthlyViews:
-          type: number
-          format: int32
-          minimum: 0
-          example: 657410
+          example: 3293
         monthlyWords:
           type: number
           format: int32
@@ -557,9 +611,29 @@ components:
         city:
           type: string
           example: 'Vila Velha'
+    Location:
+      type: object
+      required:
+        - country
+        - state
+        - city
+      properties:
+        country:
+          type: string
+          example: 'Brasil'
+        state:
+          type: string
+          example: 'Espírito Santo'
+        city:
+          type: string
+          example: 'Vila Velha'
+
 
     Skill:
       type: object
+      required:
+        - name
+        - percentage
       properties:
         name:
           type: string
@@ -571,30 +645,36 @@ components:
           maximum: 100
     BankAccount:
       type: object
+      required:
+        - bankCode
+        - agency
+        - number
+        - digit
+        - type
       properties:
-        code:
+        bankCode:
           type: number
           example: 260
         agency:
           type: string
           example: '0001'
-        accountNumber:
+        number:
           type: string
           example: '254856'
-        accountDigit:
+        digit:
           type: string
-          example: 5
-        accountType:
+          example: '5'
+        type:
           type: string
           enum:
-            - 'ccpf'
-            - 'ccpj'
-            - 'cppf'
+            - 'PF_CONTA_CORRENTE'
+            - 'PF_CONTA_POUPANCA'
+            - 'PJ_CONTA_CORRENTE'
           description: >
             Tipos de contas:
-             * `ccpf` - Conta Corrente - Pessoa Física
-             * `ccpj` - Conta Corrente - Pessoa Jurídica
-             * `cppf` - Conta Poupança - Pessoa Física
+             * `PF_CONTA_CORRENTE` - Conta Corrente - Pessoa Física
+             * `PF_CONTA_POUPANCA` - Conta Poupança - Pessoa Física
+             * `PJ_CONTA_CORRENTE` - Conta Corrente - Pessoa Jurídica
     Role:
       type: string
       example: 'editor'
