@@ -582,9 +582,7 @@ paths:
         - Cash Flow
       parameters:
         - schema:
-            type: object
             $ref: '#/components/schemas/CashFlowEntryType'
-            example: 'REVENUE'
           name: type
           description: Tipo do lançamento financeiro
           in: query
@@ -1025,7 +1023,7 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2020-03-04T00:12:45-03:00Z'
+          example: '2020-12-01T18:09:02Z'
         bankAccount:
           $ref: '#/components/schemas/BankAccount'
         location:
@@ -1040,7 +1038,7 @@ components:
         updatedAt:
           type: string
           format: date-time
-          example: '2020-03-04T00:12:45-03:00Z'
+          example: '2020-12-01T18:09:02Z'
         updatedBy:
           $ref: '#/components/schemas/UserMinimal'
         createdBy:
@@ -1215,7 +1213,7 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2020-03-04T00:12:45-03:00Z'
+          example: '2020-12-01T18:09:02Z'
         location:
           $ref: '#/components/schemas/Location'
         skills:
@@ -1244,7 +1242,7 @@ components:
         id:
           type: integer
           format: int64
-          example: '42'
+          example: 42
         slug:
           type: string
           example: 'como-fazer-x-coisas-com-react-js'
@@ -1258,11 +1256,10 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2020-12-04T00:12:45-03:00'
+          example: '2020-12-01T18:09:02Z'
         updatedAt:
           type: string
           format: date-time
-          example: '2020-12-05T00:12:45-03:00'
         published:
           type: boolean
           example: true
@@ -1333,7 +1330,7 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2017-03-04T00:12:45-03:00'
+          example: '2020-12-01T18:09:02Z'
         earnings:
           $ref: '#/components/schemas/PostEarnings'
         published:
@@ -1342,7 +1339,7 @@ components:
         updatedAt:
           type: string
           format: date-time
-          example: '2020-03-04T00:12:45-03:00Z'
+          example: '2020-12-01T18:09:02Z'
         updatedBy:
           $ref: '#/components/schemas/UserMinimal'
         canBePublished:
@@ -1383,7 +1380,7 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2017-03-04T00:12:45-03:00'
+          example: '2020-12-01T18:09:02Z'
         earnings:
           $ref: '#/components/schemas/PostEarnings'
         published:
@@ -1433,7 +1430,6 @@ components:
         - scheduledTo
       properties:
         payee:
-          type: object
           $ref: '#/components/schemas/UserIdInput'
         accountingPeriod:
           $ref: '#/components/schemas/Period'
@@ -1454,7 +1450,6 @@ components:
         - accountingPeriod
       properties:
         payee:
-          type: object
           $ref: '#/components/schemas/UserIdInput'
         accountingPeriod:
           $ref: '#/components/schemas/Period'
@@ -1543,11 +1538,11 @@ components:
         approvedAt:
           type: string
           format: date-time
-          example: '2017-03-04T00:12:45-03:00'
+          example: '2021-08-30T16:43:53Z'
         updatedAt:
           type: string
           format: date-time
-          example: '2020-03-04T00:12:45-03:00Z'
+          example: '2021-08-30T16:43:53Z'
         updatedBy:
           $ref: '#/components/schemas/UserMinimal'
         canBeApproved:
@@ -1583,7 +1578,7 @@ components:
         approvedAt:
           type: string
           format: date-time
-          example: '2020-12-01T00:12:45-03:00'
+          example: '2021-08-30T16:43:53Z'
         scheduledTo:
           type: string
           format: date
@@ -1629,7 +1624,7 @@ components:
         updatedAt:
           type: string
           format: date-time
-          example: '2020-03-04T00:12:45-03:00Z'
+          example: '2021-08-30T16:43:53Z'
         updatedBy:
           $ref: '#/components/schemas/UserMinimal'
         type:
@@ -1637,7 +1632,7 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2020-03-04T00:12:45-03:00Z'
+          example: '2021-08-30T16:43:53Z'
         createdBy:
           $ref: '#/components/schemas/UserMinimal'
         totalEntries:
@@ -1798,11 +1793,11 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2020-12-30T00:12:45-03:00'
+          example: '2021-08-30T16:43:53Z'
         updatedAt:
           type: string
           format: date-time
-          example: '2020-03-04T00:12:45-03:00Z'
+          example: '2021-08-30T16:43:53Z'
         updatedBy:
           $ref: '#/components/schemas/UserMinimal'
         canBeDeleted:
@@ -1832,7 +1827,6 @@ components:
           format: double
           minimum: 0.01
         category:
-          type: object
           $ref: '#/components/schemas/CashFlowCategoryIdInput'
         description:
           type: string
@@ -1860,12 +1854,12 @@ components:
                 type: array
                 items:
                   type: number
-                  example: [254587, 325478, 451758, 325875, 521745, 452140, 354751, 658430]
+                example: [254587, 325478, 451758, 325875, 521745, 452140, 354751, 658430]
         labels:
           type: array
           items:
             type: string
-            example: [Janeiro de 2021, Fevereiro de 2021, Março de 2021, Abril de 2021, Maio de 2021, Junho de 2021, Julho de 2021, Agosto de 2021]
+          example: [Janeiro de 2021, Fevereiro de 2021, Março de 2021, Abril de 2021, Maio de 2021, Junho de 2021, Julho de 2021, Agosto de 2021]
       example:
         datasets:
           - label: 'Receita'
@@ -2091,7 +2085,7 @@ components:
         endsOn:
           type: string
           format: date
-          example: '2020-11-31'
+          example: '2020-11-30'
 
     UploadRequestInput:
       type: object
