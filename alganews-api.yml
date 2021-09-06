@@ -834,8 +834,11 @@ components:
           authorizationUrl: 'http://localhost:8081/oauth/authorize'
           tokenUrl: 'http://localhost:8081/oauth/token'
           refreshUrl: 'http://localhost:8081/oauth/token'
-        password:
-          tokenUrl: 'http://localhost:8081/oauth/token'
+          scopes: 
+            all:write: Escrever tudo
+            all:read: Ler tudo
+            post:read: Ler posts
+          
     OAuth2Production:
       type: oauth2
       flows:
@@ -843,8 +846,10 @@ components:
           authorizationUrl: 'https://auth.alganews.com.br/oauth/authorize'
           tokenUrl: 'https://auth.alganews.com.br/oauth/token'
           refreshUrl: 'https://auth.alganews.com.br/oauth/token'
-        password:
-          tokenUrl: 'https://auth.alganews.com.br/oauth/token'
+          scopes: 
+            all:write: Escrever tudo
+            all:read: Ler tudo
+            post:read: Ler posts
 
   responses:
     NotFound:
